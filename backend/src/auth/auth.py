@@ -123,7 +123,7 @@ def requires_auth(permissions=''):
             try:
                 payload = verify_decode_jwt(jwt)
             except:
-                raise AuthError("Unauthorized", 401)
+                raise AuthError("Forbidden", 403)
 
             # check for permissions, if ok continuew, else abort
             check_permissions(permissions, payload)

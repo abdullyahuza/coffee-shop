@@ -30,7 +30,7 @@ def itExist(title):
 def get_drinks():
     try:
         drinks = Drink.query.all()
-        formatted_drinks = [drink.short() for drink in drinks]        
+        formatted_drinks = [drink.short() for drink in drinks]
     except:
         abort(422)
     
@@ -39,7 +39,7 @@ def get_drinks():
         "drinks": formatted_drinks
     }
 
-    return jsonify(response_dic), 200    
+    return jsonify(response_dic), 200
 
 
 # get drink details
@@ -84,7 +84,7 @@ def add_a_drink(payload):
                 "success": True,
                 "drinks": inserted_drink.long()
             }
-            return jsonify(response_dic), 201
+            return jsonify(response_dic), 200
         except:
             abort(422)
 
@@ -113,7 +113,7 @@ def update_a_drink(payload, drink_id):
 
             response_dic = {
                 "success": True,
-                "drinks": drink.long()
+                "drinks": [drink.long()]
             }
 
             return jsonify(response_dic), 200
