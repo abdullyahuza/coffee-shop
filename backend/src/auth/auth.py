@@ -9,14 +9,16 @@ AUTH0_DOMAIN = 'dev-jnnv8d0c.us.auth0.com'
 ALGORITHMS = ['RS256']
 API_AUDIENCE = 'drinks_api'
 
-## AuthError Exception
+# AuthError Exception
+
+
 class AuthError(Exception):
     def __init__(self, error, status_code):
         self.error = error
         self.status_code = status_code
 
 
-## get authorization header
+# get authorization header
 def get_token_auth_header(request):
 
     # get the headers
@@ -35,9 +37,11 @@ def get_token_auth_header(request):
     elif auth_header_parts[0].lower() != 'bearer':
         raise AuthError('Unauthorized', 401)
 
-    return auth_header_parts[1] 
+    return auth_header_parts[1]
 
 # check permission
+
+
 def check_permissions(permission, payload):
     if "permissions" not in payload:
         raise AuthError('Forbidden', 403)
@@ -48,15 +52,15 @@ def check_permissions(permission, payload):
     return True
 
 
-## verify jwt
+# verify jwt
 def verify_decode_jwt(token):
     # GET THE PUBLIC KEY FROM AUTH0
     jsonurl = urlopen(f'https://{AUTH0_DOMAIN}/.well-known/jwks.json')
     jwks = json.loads(jsonurl.read())
-    
+
     # GET THE DATA IN THE HEADER
     unverified_header = jwt.get_unverified_header(token)
-    
+
     # CHOOSE OUR KEY
     rsa_key = {}
     if 'kid' not in unverified_header:
@@ -104,25 +108,25 @@ def verify_decode_jwt(token):
                 'description': 'Unable to parse authentication token.'
             }, 400)
     raise AuthError({
-                'code': 'invalid_header',
+        'code': 'invalid_header',
                 'description': 'Unable to find the appropriate key.'
-            }, 400)
+    }, 400)
 
 
 # require auth decorator
 def requires_auth(permissions=''):
-    
+
     def requires_auth_decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
-            
+
             # do the authentication
             jwt = get_token_auth_header(request)
 
             # decode the jwt
             try:
                 payload = verify_decode_jwt(jwt)
-            except:
+            except BaseException:
                 raise AuthError("Forbidden", 403)
 
             # check for permissions, if ok continuew, else abort
